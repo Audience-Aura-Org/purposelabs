@@ -10,6 +10,15 @@ const nextConfig = {
       { source: '/my-account/:rest+/', destination: '/my-account/?notice=accounts', permanent: false },
       // Old WordPress search URLs.
       { source: '/', has: [{ type: 'query', key: 's', value: '(?<term>.*)' }], destination: '/shop/?q=:term', permanent: false },
+      // Old WordPress/WooCommerce URLs that may still be indexed → closest live page (301).
+      { source: '/feed/', destination: '/', permanent: true },
+      { source: '/comments/feed/', destination: '/', permanent: true },
+      { source: '/shop/page/:n/', destination: '/shop/', permanent: true },
+      { source: '/product-category/:slug/page/:n/', destination: '/product-category/:slug/', permanent: true },
+      { source: '/product-tag/:tag/', destination: '/shop/', permanent: true },
+      { source: '/product/:slug/feed/', destination: '/product/:slug/', permanent: true },
+      { source: '/wp-login.php', destination: '/my-account/', permanent: true },
+      { source: '/wp-admin/:path*', destination: '/my-account/', permanent: true },
     ];
   },
   async headers() {

@@ -519,5 +519,143 @@ a, button, summary, label, input, select, textarea, .chip, .calc-btn { touch-act
   html { zoom: .8; }
 }
 
+/* promoted h1 (pages whose first heading was an h2) keeps the h2 look */
+.content h1.h1-promoted { font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
+
+/* ==========================================================================
+   Mobile: centred layout (≤ 560px)
+   Marketing blocks, headings, cards and CTAs centre; long reading text,
+   lists, tables, forms and the cart stay left-aligned for readability.
+   ========================================================================== */
+@media (max-width: 560px) {
+  /* heroes */
+  .content :is(.peptide-hero, .about-hero, .research-hero, .buy-peptides-hero, .calculator-hero, .rewards-hero, .affiliate-hero, .affiliate-partner-hero) .container,
+  .content .quality-text, .content .about-hero-copy, .content .affiliate-partner-hero__content { text-align: center; }
+  .content :is(.peptide-hero__breadcrumb, .peptide-hero__meta) { justify-content: center; }
+  .content :is(.peptide-hero__title, .about-title, .rewards-hero-title, .affiliate-partner-hero__title, .quality-title),
+  .content :is(.peptide-hero__subtitle, .about-hero-lead, .rewards-hero-lead, .affiliate-partner-hero__lead) { margin-inline: auto; }
+  .content .quality-text { align-items: center; }
+  .content .quality-text > .quality-buttons { align-self: stretch; }
+  .content .about-hero-note { text-align: center; }
+
+  /* section headings above cards / rails / grids */
+  .content :is(.featured-products-section, .process-animation, .why-choose-us-section, .research-category, .testing-methods,
+    .peptide-related, .peptide-quality, .rewards-steps, .rewards-tiers, .rewards-faq, .affiliate-steps, .affiliate-why,
+    .affiliate-inclusions, .affiliate-faq, .trust-badges, .about-principles, .peptide-shop, .peptide-faq, .buy-peptides-faq, .why-buy-peptides)
+    .container > :is(h2, p, span, .section-title, .peptide-section-title, .peptide-section-subtitle, .category-title, .category-description,
+      .affiliate-eyebrow, .affiliate-section-title, .affiliate-section-heading, .affiliate-section-lead, .rewards-section-title, .rewards-section-lead) {
+    text-align: center; margin-inline: auto;
+  }
+  .content :is(.affiliate-section-heading, .process-header) { text-align: center; }
+  .content .view-all { text-align: center; }
+
+  /* cards */
+  .content :is(.why-choose-us-item, .benefit-card, .method-card, .rewards-step, .rewards-tier, .about-principle, .affiliate-step,
+    .affiliate-reason, .peptide-card, .peptide-related__card, .peptide-quality__method, .rewards-past-card, .affiliate-offer-card) {
+    text-align: center; align-items: center;
+  }
+  .content :is(.why-choose-us-icon, .benefit-icon, .method-icon) { margin-inline: auto; }
+  .content :is(.method-benefits, .rewards-tier-perks) { text-align: left; display: inline-block; margin-inline: auto; }
+  .content .badge-item { justify-content: center; }
+
+  /* process steps: stacked & centred */
+  .content .process-step { text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .content .step-circle { margin-inline: auto; }
+  .content .process-steps { text-align: center; gap: var(--s-5); }
+
+  /* trust bar: 2×2, centred */
+  .content .trust-bar-items { grid-template-columns: 1fr 1fr; gap: var(--s-4) var(--s-3); }
+  .content .trust-bar-item { flex-direction: column; text-align: center; gap: 6px; font-size: .88rem; }
+
+  /* about page */
+  .content .about-story-heading, .content .about-section-content { text-align: center; }
+  .content .about-section-content .button { margin-inline: auto; }
+  .content .about-closing-grid, .content .about-closing .container { text-align: center; }
+  .content .about-cta-actions { justify-content: center; }
+
+  /* product cards */
+  .pcard__body { text-align: center; }
+  .pcard__price { justify-items: center; }
+
+  /* shop header */
+  .shop-head .wrap { text-align: center; }
+  .shop-head .crumbs { justify-content: center; }
+  .shop-count { text-align: center; }
+
+  /* product page summary */
+  .pdp .crumbs { justify-content: center; }
+  .pdp__summary > :is(.eyebrow, .pdp__title) { text-align: center; }
+  .pdp__price { justify-content: center; }
+  .pdp__gst { text-align: center; }
+  .pdp__short { text-align: center; }
+  .stock { justify-content: center; }
+  .pdp__gallery { margin-inline: auto; }
+
+  /* order received / empty states */
+  .receipt > :is(.eyebrow, .display, .lead) { text-align: center; }
+
+  /* footer */
+  .site-footer__brand { text-align: center; }
+  .site-footer__brand .wordmark { justify-content: center; }
+  .site-footer__notice { margin-inline: auto; }
+  .site-footer__bottom { align-items: center; text-align: center; }
+
+  /* announcement */
+  .announce__inner { justify-content: center; }
+}
+
+/* ==========================================================================
+   Mobile menu (≤ 960px)
+   ========================================================================== */
+.nav-chevron { display: none; }
+@media (max-width: 960px) {
+  .site-header.is-menu-open { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom-color: var(--line); }
+
+  .primary-nav { display: flex; flex-direction: column; background: #fff; overscroll-behavior: contain;
+    padding: var(--s-3) var(--gutter) calc(var(--s-5) + env(safe-area-inset-bottom)); }
+  .primary-nav .nav-search { margin: 0 0 var(--s-2); }
+
+  /* main links: full-width rows, straight dividers, chevrons */
+  .primary-nav ul { gap: 0; }
+  .primary-nav ul li a {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    min-height: 56px; padding: 0 4px; border-radius: 0; border-bottom: 1px solid var(--line);
+    font: 600 1.05rem/1.2 var(--f-display); letter-spacing: -.01em; color: var(--ink); background: none;
+  }
+  .primary-nav ul li a:active { background: var(--paper-2); }
+  .primary-nav ul li a[aria-current="page"] { color: var(--signal); background: none; box-shadow: inset 3px 0 0 var(--signal); padding-left: 14px; }
+  .nav-chevron { display: block; color: var(--muted); flex-shrink: 0; }
+  .primary-nav ul li a[aria-current="page"] .nav-chevron { color: var(--signal); }
+
+  /* help & account tiles */
+  .nav-panel__more { margin-top: var(--s-5); }
+  .nav-panel__label { font: 600 max(12px, .72rem)/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 var(--s-3); }
+  .nav-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+  .primary-nav .nav-tile {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px;
+    min-height: 84px; padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md);
+    background: var(--paper-2); color: var(--ink); font: 500 .9rem/1.25 var(--f-body);
+  }
+  .primary-nav .nav-tile svg { color: var(--signal); }
+  .primary-nav .nav-tile:active { background: var(--signal-tint); border-color: #cfe0ff; }
+  .primary-nav .nav-tile[aria-current="page"] { border-color: var(--signal); background: var(--signal-tint); }
+
+  /* footer of the panel */
+  .nav-panel__foot { margin-top: auto; padding-top: var(--s-5); text-align: center; }
+  .primary-nav .nav-panel__foot .btn { border: 0; min-height: 52px; color: #fff; font: 600 1rem/1 var(--f-body); border-radius: var(--r-md); padding: 0 1.2em; display: inline-flex; }
+  .nav-panel__foot p { margin: var(--s-3) 0 0; font-size: .85rem; color: var(--muted); }
+
+  /* gentle staggered entrance */
+  .primary-nav ul li, .nav-panel__more, .nav-panel__foot { opacity: 0; transform: translateY(6px); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+  .primary-nav.is-open ul li, .primary-nav.is-open .nav-panel__more, .primary-nav.is-open .nav-panel__foot { opacity: 1; transform: none; }
+  .primary-nav.is-open ul li:nth-child(2) { transition-delay: .03s; }
+  .primary-nav.is-open ul li:nth-child(3) { transition-delay: .06s; }
+  .primary-nav.is-open ul li:nth-child(4) { transition-delay: .09s; }
+  .primary-nav.is-open ul li:nth-child(5) { transition-delay: .12s; }
+  .primary-nav.is-open .nav-panel__more { transition-delay: .15s; }
+  .primary-nav.is-open .nav-panel__foot { transition-delay: .18s; }
+}
+@media (max-width: 340px) { .nav-tiles { grid-template-columns: 1fr; } .primary-nav .nav-tile { min-height: 56px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; } }
+
 /* empty cart: no "0" bubble */
 .cart-link__count[data-zero="true"] { display: none; }

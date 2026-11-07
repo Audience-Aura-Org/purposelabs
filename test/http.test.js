@@ -122,6 +122,50 @@ test('track order: finds by number + email, rejects wrong email, no PII in URL',
   assert.match(res.location, /notice=notfound/);
 });
 
+test('SEO: unique titles, descriptions, one h1, canonical, OG/Twitter, valid JSON-LD', async () => {
+  const r = client(srv.base);
+  const urls = ['/', '/shop/', ...pages.filter((p) => !['home', 'my-account', 'affiliate-area'].includes(p.slug)).map((p) => `/${p.slug}/`),
+    ...categories.map((c) => `/product-category/${c.slug}/`), ...products.map((p) => `/product/${p.slug}/`)];
+  const titles = new Map();
+  const problems = [];
+  for (const u of urls) {
+    const html = (await r(u)).text;
+    const title = html.match(/<title>([^<]*)<\/title>/)?.[1];
+    const desc = html.match(/<meta name="description" content="([^"]*)"/)?.[1];
+    if (!title) problems.push(`${u}: no title`);
+    else if (titles.has(title)) problems.push(`${u}: duplicate title with ${titles.get(title)}`);
+    else titles.set(title, u);
+    if (!desc || desc.length < 50) problems.push(`${u}: description missing/short`);
+    const h1s = (html.match(/<h1[\s>]/g) || []).length;
+    if (h1s !== 1) problems.push(`${u}: ${h1s} h1`);
+    if (!html.includes(`<link rel="canonical" href="https://purposelabsau.com${u}"`)) problems.push(`${u}: canonical`);
+    if (!/<meta property="og:image"/.test(html)) problems.push(`${u}: og:image`);
+    if (!/<meta name="twitter:card" content="summary_large_image"/.test(html)) problems.push(`${u}: twitter card`);
+    for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      try { JSON.parse(m[1]); } catch { problems.push(`${u}: invalid JSON-LD`); }
+    }
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
+
+  const home = (await r('/')).text;
+  assert.match(home, /"@type":"Organization"/);
+  assert.match(home, /"@type":"WebSite"[\s\S]*SearchAction/);
+  const pdp = (await r('/product/bpc-157-10mg/')).text;
+  assert.match(pdp, /"@type":"Product"[\s\S]*"brand"[\s\S]*"shippingDetails"/);
+  assert.match(pdp, /"@type":"BreadcrumbList"/);
+  assert.match((await r('/product-category/healing-peptides/')).text, /"@type":"ItemList"/);
+  assert.match((await r('/bpc-157/')).text, /"@type":"FAQPage"/);
+  assert.match((await r('/shop/?q=bpc')).text, /<meta name="robots" content="noindex/);
+  assert.match(home, /<meta property="og:image" content="https:\/\/purposelabsau\.com\/opengraph-image\/"/);
+  assert.match(home, /<link rel="apple-touch-icon" href="\/apple-icon\/"/);
+  for (const u of ['/opengraph-image/', '/brand-logo.png', '/apple-icon/', '/manifest.webmanifest']) {
+    assert.equal((await r(u)).status, 200, u);
+  }
+  assert.match((await r('/sitemap.xml')).text, /<image:loc>/);
+  assert.equal((await r('/feed/')).status, 308);
+  assert.equal((await r('/shop/page/2/')).status, 308);
+});
+
 test('legacy URLs, search, sort, SEO', async () => {
   const r = client(srv.base);
   assert.equal((await r('/bpc-157')).status, 308);

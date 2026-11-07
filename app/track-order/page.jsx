@@ -1,14 +1,11 @@
 import { getPage, money } from '@/lib/catalog';
 import { readToken } from '@/lib/token';
+import { buildMetadata } from '@/lib/seo';
 import LegacyPage from '@/components/LegacyPage';
 
 const page = getPage('track-order');
 
-export const metadata = {
-  title: page.title,
-  description: page.description,
-  alternates: { canonical: '/track-order/' },
-};
+export const metadata = buildMetadata({ title: page.title, description: page.description, path: '/track-order/' });
 
 export default async function TrackOrderPage({ searchParams }) {
   const { t } = await searchParams;

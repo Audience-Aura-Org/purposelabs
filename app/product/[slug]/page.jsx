@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { products, getProduct, getCategory, productsFor, money, large } from '@/lib/catalog';
 import { gridHtml } from '@/lib/cards';
-import { brand } from '@/lib/config';
+import { buildMetadata, productLd, breadcrumbLd } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 import AddedNotice from './AddedNotice';
 
 export const dynamicParams = false;
@@ -14,12 +15,12 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const p = getProduct(slug);
   if (!p) return {};
-  return {
-    title: p.metaTitle || p.name,
+  return buildMetadata({
+    title: p.metaTitle || `${p.name} | Purpose Labs Australia`,
     description: p.metaDescription || p.summary,
-    alternates: { canonical: `/product/${slug}/` },
-    openGraph: { images: [{ url: large(p.image), width: 600, height: 600 }] },
-  };
+    path: `/product/${slug}/`,
+    image: { url: large(p.image), width: 600, height: 600, alt: p.imageAlt },
+  });
 }
 
 export default async function ProductPage({ params }) {
@@ -28,14 +29,8 @@ export default async function ProductPage({ params }) {
   if (!p) notFound();
   const cats = p.categories.map(getCategory).filter(Boolean);
   const related = productsFor(p.related).slice(0, 4);
-  const jsonLd = {
-    '@context': 'https://schema.org', '@type': 'Product', name: p.name, sku: p.sku,
-    description: p.summary, image: brand.siteUrl + p.image, url: `${brand.siteUrl}/product/${p.slug}/`,
-    offers: {
-      '@type': 'Offer', price: (p.price / 100).toFixed(2), priceCurrency: 'AUD',
-      availability: p.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-    },
-  };
+  const crumbs = [['Shop', '/shop/'], ...(cats[0] ? [[cats[0].name, `/product-category/${cats[0].slug}/`]] : []), [p.name, `/product/${p.slug}/`]];
+  const jsonLd = [productLd(p, cats[0]?.name), breadcrumbLd(crumbs)];
 
   return (
     <>
@@ -128,7 +123,7 @@ export default async function ProductPage({ params }) {
         </section>
       )}
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
+      <JsonLd data={jsonLd} />
     </>
   );
 }
