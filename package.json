@@ -1,0 +1,28 @@
+{
+  "name": "purposelabs-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "extract": "node scripts/extract.js",
+    "test": "node --test test/*.test.js",
+    "test:e2e": "node test/browser.e2e.js",
+    "audit": "node test/layout-audit.mjs",
+    "audit:mobile": "node test/mobile-audit.mjs",
+    "mail:test": "node --env-file-if-exists=.env.local scripts/mail-test.js"
+  },
+  "dependencies": {
+    "next": "^16.4.5",
+    "nodemailer": "^10.3.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0",
+    "playwright-core": "^1.65.0"
+  }
+}

@@ -1,0 +1,13 @@
+node_modules/
+.next/
+data/
+.env*
+!.env.example
+
+# HTTrack copy of the old WordPress site (extraction source only; has crawl cookies/cache)
+_original-mirror/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

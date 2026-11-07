@@ -1,0 +1,523 @@
+/* ==========================================================================
+   Clinical minimal theme + usability + spacing layer.
+   Loaded after globals.css; overrides the earlier editorial styles.
+   ========================================================================== */
+
+/* ---------- spacing scale ----------
+   One rhythm everywhere: --s-1..--s-8 (4px base). Sections use --sect. */
+:root {
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+  --wrap: 1240px;
+  --gutter: clamp(16px, 3.2vw, 32px);
+  --sect: clamp(48px, 7vw, 96px);
+}
+
+/* ---------- type ----------
+   Root at 15px (~8% smaller than default) so every rem-based size scales
+   down together. Form inputs stay at 16px so iPhones don't auto-zoom. */
+html { font-size: 93.75%; }
+body { font-size: 15px; line-height: 1.65; color: var(--ink-2); font-feature-settings: 'tnum' 1; }
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -.025em; font-variation-settings: normal; line-height: 1.15; }
+h1 { font-size: clamp(1.8rem, 3.8vw, 2.8rem); }
+h2 { font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
+h3 { font-weight: 600; letter-spacing: -.01em; }
+p { margin-bottom: var(--s-4); }
+.display { font-weight: 600; }
+.eyebrow, .section-label, .shop-count, .content :is(.about-eyebrow, .rewards-eyebrow, .affiliate-eyebrow, .partner-label),
+.content .quality-tagline, .site-footer__col h2, .price-block__label, .spec-strip dt, .content .calculator-group > label,
+.content .result-label, .content table thead th, .content .legal-page-updated, .content .peptide-card__tagline {
+  font-family: var(--f-body); font-weight: 600; letter-spacing: .08em; font-size: .72rem;
+}
+.eyebrow, .content .quality-tagline, .content :is(.about-eyebrow, .rewards-eyebrow, .affiliate-eyebrow, .partner-label) { color: var(--signal); }
+.mono, .pcard__now, .price-block__amt, .line__total, .totals dd, .drawer__subtotal strong { font-family: var(--f-body); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+
+/* ---------- buttons: 48px targets ---------- */
+.btn, .content .button, .content .btn { border-radius: var(--r-md); min-height: 48px; font-weight: 600; border-width: 1px; }
+.btn--sm, .content .button-small { min-height: 42px; }
+.btn--lg, .content .button-large { min-height: 54px; }
+.btn--ghost, .content .button.outline, .content .button-outline { --b-bd: var(--line-2); }
+:focus-visible { outline-color: var(--signal); }
+
+/* ---------- header ---------- */
+.announce { background: var(--paper-2); color: var(--ink-2); font: 500 .8rem/1 var(--f-body); letter-spacing: 0; border-bottom: 1px solid var(--line); }
+.announce__inner { min-height: 34px; }
+.announce__dot { background: var(--line-2); }
+.site-header { background: rgba(255, 255, 255, .94); border-bottom-color: var(--line); }
+.site-header__inner { min-height: 68px; gap: var(--s-5); }
+.wordmark { color: var(--ink); }
+.wordmark__text { font: 600 1.2rem/1 var(--f-body); letter-spacing: -.03em; }
+.primary-nav a { font-weight: 500; border-radius: var(--r-md); color: var(--ink-2); padding: 10px 12px; }
+.primary-nav a[aria-current="page"] { background: var(--paper-2); box-shadow: none; color: var(--ink); }
+.header-search { border-radius: var(--r-md); background: var(--paper-2); border-color: transparent; height: 42px; }
+.header-search:focus-within { background: #fff; border-color: var(--signal); box-shadow: 0 0 0 3px var(--signal-tint); }
+.header-search input { font-size: 16px; } /* no iOS zoom */
+.tool-link { font-weight: 500; border-radius: var(--r-md); }
+.cart-link { border-radius: var(--r-md); }
+.cart-link__count { background: var(--signal); font-family: var(--f-body); font-weight: 600; }
+.nav-toggle { border-radius: var(--r-md); }
+.nav-search { display: none; }
+@media (max-width: 960px) {
+  .site-header__inner { min-height: 60px; }
+  .nav-search { display: flex; width: 100%; height: 48px; margin: 4px 0 12px; }
+  .primary-nav a { font: 500 1.05rem/1.2 var(--f-body); padding: 16px 4px; }
+  .primary-nav a[aria-current="page"] { color: var(--signal); background: none; }
+  .wordmark__text { font-size: 1.1rem; }
+}
+
+/* ---------- footer: light ---------- */
+.site-footer { background: var(--paper-2); color: var(--ink-2); border-top: 1px solid var(--line); }
+.site-footer a { color: var(--ink-2); }
+.site-footer a:hover { color: var(--ink); }
+.site-footer__top { padding-block: var(--s-8) var(--s-7); gap: var(--s-6); }
+.site-footer__col h2 { color: var(--muted); }
+.site-footer__col ul { gap: var(--s-3); }
+.site-footer__bottom { border-top-color: var(--line); color: var(--muted); }
+.wordmark--light, .wordmark--light .wordmark__text { color: var(--ink); }
+@media (max-width: 720px) { .site-footer__top { padding-block: var(--s-7) var(--s-6); gap: var(--s-6) var(--s-5); } .site-footer__col ul { gap: 2px; } .site-footer__col a { display: block; padding: 8px 0; } }
+
+/* ---------- product cards ---------- */
+.product-grid { gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.pcard { border-radius: var(--r-lg); border-color: var(--line); box-shadow: none; }
+.pcard:hover { transform: none; box-shadow: var(--shadow-2); border-color: var(--line-2); }
+.pcard__media { background: var(--tile); margin: var(--s-2) var(--s-2) 0; border-radius: var(--r-md); overflow: hidden; }
+.pcard__media img, .pdp__frame img, .line__img, .mini-lines img, .drawer__lines img { mix-blend-mode: multiply; }
+.line__img, .mini-lines img, .drawer__lines img { background: var(--tile); }
+.pcard__body { padding: var(--s-3) var(--s-4) var(--s-1); }
+.pcard__name { font: 500 .98rem/1.35 var(--f-body); color: var(--ink); }
+.pcard__now { font-size: 1.1rem; font-weight: 600; color: var(--ink); }
+.pcard__bank { color: var(--ok); font-weight: 500; font-size: .8rem; }
+.pcard__flag { font-family: var(--f-body); font-weight: 600; border-radius: var(--r-sm); background: var(--ink-2); }
+.pcard__add { padding: var(--s-3) var(--s-4) var(--s-4); }
+a.pcard__add { margin: 0 var(--s-4) var(--s-4); }
+.pcard__add .btn { --b-bg: #fff; --b-fg: var(--ink); --b-bd: var(--line-2); }
+.pcard__add .btn:hover { --b-bg: var(--signal); --b-fg: #fff; --b-bd: var(--signal); }
+.product-grid--rail { grid-auto-columns: minmax(220px, 250px); gap: var(--s-4); }
+/* phones: two columns so shoppers can compare */
+@media (max-width: 560px) {
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); }
+  .product-grid--rail { grid-template-columns: none; grid-auto-columns: 46%; }
+  .pcard__media { margin: 6px 6px 0; }
+  .pcard__body { padding: var(--s-2) var(--s-3) 0; }
+  .pcard__name { font-size: .88rem; }
+  .pcard__now { font-size: 1rem; }
+  .pcard__bank { font-size: .72rem; }
+  .pcard__add { padding: var(--s-2) var(--s-3) var(--s-3); }
+  a.pcard__add { margin: 0 var(--s-3) var(--s-3); }
+  .pcard__add .btn { min-height: 40px; font-size: .82rem; padding-inline: .5em; }
+}
+
+/* ---------- shop ---------- */
+.shop-head { padding-block: var(--s-6) var(--s-4); }
+.shop-head__intro { margin-top: var(--s-3); }
+.shop-bar { border: 0; padding: 0; margin-bottom: var(--s-2); gap: var(--s-3); }
+.shop-count { margin: var(--s-2) 0 var(--s-4); }
+.chip { border-radius: 999px; min-height: 40px; display: inline-flex; align-items: center; font-weight: 500; background: #fff; }
+.chip[aria-current="page"] { background: var(--ink); border-color: var(--ink); }
+.sort select, .field select { border-radius: var(--r-md); min-height: 42px; font-size: 16px; }
+@media (max-width: 720px) {
+  .shop-head { padding-block: var(--s-5) var(--s-3); }
+  .chips { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter) 6px; scrollbar-width: none; width: calc(100% + var(--gutter) * 2); }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; }
+  .sort { width: 100%; } .sort select { flex: 1; }
+}
+
+/* ---------- product page ---------- */
+.pdp { padding-block: var(--s-5) var(--sect); }
+.pdp__grid { gap: clamp(var(--s-5), 5vw, var(--s-8)); }
+.pdp__frame { background: var(--tile); border: 0; border-radius: var(--r-lg); }
+.spec-strip { border-radius: var(--r-md); }
+.spec-strip dd { font-family: var(--f-body); font-weight: 500; }
+.pdp__title { font-size: clamp(1.6rem, 3vw, 2.25rem); letter-spacing: -.03em; margin-bottom: var(--s-4); }
+.pdp__price { margin-bottom: var(--s-5); }
+.price-block { border-radius: var(--r-md); }
+.price-block__amt { font-size: 1.6rem; font-weight: 600; color: var(--ink); }
+.price-block--signal { background: var(--ok-tint); border-color: #bfe5cd; }
+.price-block--signal .price-block__label, .price-block__note { color: var(--ok); }
+.qty { border-radius: var(--r-md); height: 54px; }
+.qty--sm { height: 44px; }
+.qty__btn { border-radius: var(--r-md); width: 44px; }
+.qty--sm .qty__btn { width: 40px; }
+.qty input { font-family: var(--f-body); font-size: 16px; }
+.pdp-desc { background: var(--paper-2); border: 0; }
+.related { padding-block: var(--sect); }
+.related .h2 { margin-bottom: var(--s-5); }
+@media (max-width: 860px) {
+  .pdp__gallery { max-width: 520px; }
+  /* keep Add to Cart reachable while reading */
+  .pdp__buy { position: sticky; bottom: 0; z-index: 20; background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    margin-inline: calc(var(--gutter) * -1); padding: var(--s-3) var(--gutter) calc(var(--s-3) + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); flex-wrap: nowrap; }
+  .pdp__buy .btn { min-width: 0; }
+  .price-block { min-width: 0; flex: 1; }
+}
+
+/* ---------- accordions ---------- */
+details > summary { font-weight: 500; color: var(--ink); min-height: 56px; padding: var(--s-3) 0; }
+details > summary::after { border-radius: var(--r-sm); background-color: var(--paper-2); }
+details[open] > summary::after { background-color: var(--signal-tint); }
+
+/* ---------- cart / checkout / drawer ---------- */
+.flow { padding-block: var(--s-6) var(--sect); }
+.flow h1 { margin-bottom: var(--s-5); }
+.flow__grid { gap: var(--s-5); }
+.lines, .summary, .panel { border-radius: var(--r-lg); }
+.summary { background: var(--paper-2); border-color: transparent; }
+.panel { padding: var(--s-5); margin-bottom: var(--s-4); }
+.panel__title { font: 600 1.1rem/1.2 var(--f-body); letter-spacing: -.01em; }
+.step { background: var(--signal); font-family: var(--f-body); border-radius: 8px; }
+.option { border-width: 1px; border-radius: var(--r-md); min-height: 64px; }
+.option:has(input:checked) { border-color: var(--signal); background: var(--signal-tint); box-shadow: inset 0 0 0 1px var(--signal); }
+.option input, .check input { accent-color: var(--signal); }
+.option__price { font-family: var(--f-body); }
+.option__price--signal, .totals__signal dt, .totals__signal dd { color: var(--ok); }
+.field input, .field textarea, .field select { border-radius: var(--r-md); min-height: 50px; font-size: 16px; }
+.field input:focus, .field textarea:focus, .field select:focus, .content input:focus, .content textarea:focus, .content select:focus { border-color: var(--signal); box-shadow: 0 0 0 3px var(--signal-tint); }
+.ship-meter__bar span { background: var(--ok); }
+.panel--signal { background: var(--signal-tint); border-color: #cfe0ff; }
+.kv > div { border-bottom-color: #cfe0ff; }
+.drawer__panel { background: #fff; }
+.drawer__scrim { background: rgba(15, 23, 42, .4); }
+.drawer__foot { background: var(--paper-2); }
+.drawer__head h2 { font-size: 1.25rem; }
+.mini-lines__qty, .line__unit { font-family: var(--f-body); }
+@media (max-width: 640px) {
+  .flow { padding-top: var(--s-5); }
+  .panel { padding: var(--s-4); }
+  .summary { padding: var(--s-5) var(--s-4); position: static; }
+  .cart-table__actions { flex-wrap: wrap; gap: var(--s-3); }
+}
+
+/* ---------- content pages ---------- */
+.content :is(.peptide-hero, .about-hero, .research-hero, .buy-peptides-hero, .calculator-hero, .rewards-hero, .affiliate-hero, .affiliate-partner-hero),
+.content .quality-section--hero { background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%); }
+.content :is(.peptide-hero, .about-hero, .research-hero, .buy-peptides-hero, .calculator-hero, .rewards-hero, .affiliate-hero, .affiliate-partner-hero) { padding-block: clamp(40px, 7vw, 96px) clamp(36px, 5vw, 72px); }
+.content .quality-section--hero { padding-block: clamp(36px, 6vw, 88px); }
+.content :is(.peptide-hero__title, .about-title, .rewards-hero-title, .affiliate-hero-title, .affiliate-partner-hero__title), .content .research-hero h1, .content .buy-peptides-hero h1, .content .calculator-hero h1 { font-size: clamp(1.85rem, 4.2vw, 2.9rem); letter-spacing: -.035em; }
+.content .quality-title { font-size: clamp(2rem, 4.8vw, 3.4rem); letter-spacing: -.04em; }
+.content .about-section-lead, .content .about-lead, .content .about-closing-lead { font: 500 clamp(1.15rem, 2.2vw, 1.5rem)/1.45 var(--f-body); letter-spacing: -.015em; }
+.content .rewards-hero-figure, .content .affiliate-offer-card__figure { font-family: var(--f-body); font-weight: 700; letter-spacing: -.04em; }
+.content :is(.peptide-card__name, .peptide-related__name, .about-principle-title, .rewards-step-title, .rewards-tier-name) { font-family: var(--f-body); font-weight: 600; letter-spacing: -.02em; }
+.content a:not(.button):not(.btn):not([class*="card"]):not(.view-all-link):not(.hero-spec-card) { color: var(--signal-2); font-weight: 500; }
+.content .peptide-hero__badge, .content .hero-spec-pill { font-family: var(--f-body); font-weight: 500; border-radius: var(--r-sm); background: #fff; }
+.content .section-title, .content .peptide-section-title { margin-bottom: var(--s-5); }
+
+/* hero spec cards: flat, clinical */
+.content .hero-spec-card { border-radius: var(--r-lg); border-color: var(--line); box-shadow: var(--shadow-2); min-height: 280px; }
+.content .hero-spec-top { background: var(--paper-2); color: var(--ink); font: 600 .85rem/1 var(--f-body); border-bottom: 1px solid var(--line); }
+.content .hero-spec-name { font: 600 1.3rem/1.1 var(--f-body); letter-spacing: -.03em; }
+.content .hero-spec-ref, .content .hero-spec-rows { font-family: var(--f-body); }
+.content .hero-spec-pill { background: var(--ok-tint); color: var(--ok); }
+.content .hero-spec-pill .tag { color: var(--ok); font-weight: 600; }
+.content .hero-spec-ruo strong { color: var(--ink); }
+@media (max-width: 900px) {
+  .content .hero-shelf { margin-top: var(--s-5); }
+  .content .hero-leaf--2, .content .hero-leaf--3 { transform: none; }
+  .content .hero-leaf--2:hover, .content .hero-leaf--3:hover { transform: translateY(-4px); }
+}
+@media (max-width: 520px) {
+  .content .hero-shelf { padding: var(--s-2) var(--gutter) var(--s-3); grid-template-columns: repeat(3, 72%); }
+  .content .hero-spec-card { min-height: 0; }
+}
+
+/* light bands instead of dark */
+.content .trust-bar { background: var(--paper-2); color: var(--ink); border-block: 1px solid var(--line); padding-block: var(--s-5) !important; }
+.content .trust-bar-item svg { color: var(--signal); }
+.content .process-animation { background: #fff; }
+.content .step-circle { background: var(--signal-tint); border-color: #cfe0ff; color: var(--signal); }
+.content .step-circle::after { font-family: var(--f-body); }
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .container {
+  background: var(--paper-2); background-image: none; color: var(--ink-2); border: 1px solid var(--line); padding: clamp(28px, 5vw, 64px);
+}
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) :is(h2, h3, .rewards-closing-title, .about-closing-lead) { color: var(--ink); }
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) a:not(.button):not(.btn) { color: var(--signal-2) !important; }
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .button.outline,
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .button-outline,
+.content .affiliate-button-light { --b-bg: #fff; --b-fg: var(--ink); --b-bd: var(--line-2); }
+/* CTA bands sit inside the page gutter, not edge-to-edge on phones */
+@media (max-width: 560px) {
+  .content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .container { width: calc(100% - var(--gutter) * 2); padding: var(--s-5) var(--s-4); }
+}
+.content .affiliate-offer-card { background: var(--signal); color: #e0eaff; }
+.content .affiliate-offer-card__label, .content .affiliate-offer-card__terms { color: #dbe6ff; }
+
+/* cards & callouts */
+.content :is(.why-choose-us-grid, .benefits-grid, .methods-grid, .badges-grid, .peptide-grid, .peptide-related__grid, .peptide-quality__methods, .rewards-tier-list, .rewards-steps-list, .about-principles-list, .affiliate-steps__list, .affiliate-reasons, .rewards-faq-grid, .affiliate-proof__list) { gap: var(--s-4); }
+.content :is(.why-choose-us-item, .benefit-card, .benefit-item, .method-card, .badge-item, .peptide-card, .peptide-related__card, .peptide-quality__method, .rewards-tier, .rewards-step, .about-principle, .affiliate-step, .affiliate-reason, .rewards-past-card, .rewards-faq-item, .faq-item) { border-radius: var(--r-lg); padding: var(--s-5); }
+.content :is(.peptide-card, .peptide-related__card):hover { transform: none; border-color: var(--signal); box-shadow: 0 0 0 1px var(--signal), var(--shadow-2); }
+.content :is(.why-choose-us-icon, .benefit-icon, .method-icon) { background: var(--signal-tint); color: var(--signal); border-radius: var(--r-md); }
+.content :is(.peptide-disclaimer__box, .disclaimer-box, .legal-notice, .peptide-storage__warning, .affiliate-compliance__panel, .research-disclaimer .container > div) {
+  background: #fffbeb; border-color: #fde68a; border-radius: var(--r-lg);
+}
+.content .peptide-disclaimer__title { color: #92400e; }
+.content [class*="table-wrapper"], .content .shipping-rates-table { border-radius: var(--r-lg); }
+.content table thead th { background: var(--paper-2); }
+.content table th, .content table td { padding: var(--s-3) var(--s-4); }
+.content .peptide-shop__table td:nth-child(3) ins { font-family: var(--f-body); color: var(--ok); }
+.content .peptide-sequence { font-family: ui-monospace, Menlo, monospace; }
+@media (max-width: 560px) {
+  .content :is(.why-choose-us-item, .benefit-card, .method-card, .peptide-card, .peptide-related__card, .rewards-tier, .rewards-step, .about-principle, .affiliate-step, .affiliate-reason, .rewards-faq-item, .faq-item) { padding: var(--s-4); }
+  .content table th, .content table td { padding: 10px var(--s-3); font-size: .9rem; }
+  .content table tbody th { width: 40%; }
+}
+
+/* calculator */
+.content .calc-btn { border-radius: var(--r-md); font-family: var(--f-body); font-weight: 500; min-height: 44px; }
+.content .calc-btn.active { background: var(--signal); border-color: var(--signal); }
+.content .syringe-fill { background: linear-gradient(180deg, #93b4ff, var(--signal)); }
+.content .syringe-markings span { background: rgba(15, 23, 42, .3); }
+.content .result-value { font-family: var(--f-body); font-weight: 600; letter-spacing: -.03em; }
+.content .result-info span { font-family: var(--f-body); }
+@media (max-width: 860px) { .content .calculator-result { position: static; } }
+
+/* forms in content */
+.content .contact-form, .content .affwp-form, .content .woocommerce .u-columns > div { border-radius: var(--r-lg); background: var(--paper-2); border-color: transparent; }
+.content input[type=text], .content input[type=email], .content input[type=password], .content input[type=tel], .content textarea, .content select { min-height: 50px; font-size: 16px; border-radius: var(--r-md); }
+.content .contact-form-hint { background: var(--signal-tint); }
+.content .legal-page { padding-top: var(--s-6); }
+
+/* ---------- section rhythm (desktop + mobile) ----------
+   Every content section gets half the rhythm above and below, so any two
+   neighbours are exactly one --sect apart. Heroes and bands set their own. */
+.content section:not(.legal-section) { padding-block: calc(var(--sect) / 2) !important; margin-top: 0 !important; }
+.content > div > section:last-child { padding-bottom: var(--sect) !important; }
+.content :is(.peptide-hero, .about-hero, .research-hero, .buy-peptides-hero, .calculator-hero, .rewards-hero, .affiliate-hero, .affiliate-partner-hero, .quality-section--hero) {
+  padding-block: clamp(40px, 7vw, 96px) clamp(36px, 5vw, 72px) !important; margin-bottom: calc(var(--sect) / 4);
+}
+.content .trust-bar { padding-block: var(--s-5) !important; margin-block: calc(var(--sect) / 2) !important; }
+.content .process-animation { padding-block: var(--sect) !important; margin-block: calc(var(--sect) / 2) !important; background: var(--paper-2); border-color: var(--line); }
+.content .process-animation .step-circle { background: #fff; }
+.content .legal-page .legal-section { padding: var(--s-5) 0 0 !important; }
+
+/* CTA panels align with the content column */
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .container {
+  width: calc(100% - var(--gutter) * 2); max-width: calc(var(--wrap) - var(--gutter) * 2);
+}
+
+/* product names stay ink inside legacy content */
+.content .pcard__name a { color: var(--ink) !important; font-weight: 500 !important; }
+.content .pcard__name a:hover { color: var(--signal-2) !important; }
+
+/* hero spec cards: inset rail on phones */
+@media (max-width: 520px) {
+  .content .hero-shelf { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); grid-template-columns: repeat(3, 70%); }
+}
+
+/* ---------- headings: Quicksand ----------
+   Rounded and lighter-looking than Poppins, so headings use weight 700 and
+   near-normal tracking to stay crisp. Body text remains Poppins. */
+h1, h2, h3, h4, .display, .h2, .h3,
+.wordmark__text, .pdp__title, .panel__title, .drawer__head h2,
+.content :is(.peptide-card__name, .peptide-related__name, .about-principle-title, .rewards-step-title, .rewards-tier-name, .hero-spec-name, .quality-title),
+.content :is(.about-section-lead, .about-lead, .about-closing-lead),
+.content :is(.rewards-hero-figure, .affiliate-offer-card__figure, .result-value) {
+  font-family: var(--f-display); font-weight: 700; letter-spacing: -.012em;
+}
+.content .quality-title, .content :is(.peptide-hero__title, .about-title, .rewards-hero-title, .affiliate-hero-title, .affiliate-partner-hero__title),
+.content .research-hero h1, .content .buy-peptides-hero h1, .content .calculator-hero h1, .pdp__title { letter-spacing: -.025em; }
+.content :is(.about-section-lead, .about-lead, .about-closing-lead) { font-weight: 600; }
+
+/* ==========================================================================
+   Alignment pass
+   - headings wrap evenly (no arbitrary width caps)
+   - long-form reading pages use one centred article column
+   - short intros, text-only heroes and CTA panels are centred
+   ========================================================================== */
+h1, h2, h3, .display { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+.content .container > h2:first-child, .content .section-title, .content .peptide-section-title, .content .process-title,
+.content .affiliate-section-title, .content .rewards-section-title, .content .category-title { max-width: none; }
+
+/* Reading column: guide pages + calculator how-to + research intro */
+.content.peptide-info-page .container,
+.content .reconstitution-guide .container { max-width: calc(880px + var(--gutter) * 2); }
+.content.peptide-info-page :is(p, li),
+.content .reconstitution-guide :is(p, li) { max-width: none; }
+.content.peptide-info-page [class*="table-wrapper"] { max-width: none; }
+.content.peptide-info-page :is(.peptide-related__grid, .peptide-quality__methods) { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.content.peptide-info-page :is(.peptide-faq__list, .peptide-disclaimer__box) { max-width: none; }
+
+/* Centred blocks */
+.content :is(.research-hero, .calculator-hero, .rewards-hero, .buy-peptides-hero) .container,
+.content :is(.research-intro, .process-header),
+.content .research-intro .container,
+.content :is(.why-choose-us-section, .testing-methods, .rewards-steps, .rewards-faq) .container > :is(h2, .section-title, .section-subtitle, .rewards-section-title, .rewards-section-lead):not(.why-choose-us-grid),
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) .container {
+  text-align: center;
+}
+.content :is(.research-hero, .calculator-hero, .rewards-hero, .buy-peptides-hero) :is(h1, p),
+.content :is(.research-intro, .process-header) :is(h2, p),
+.content .research-intro .container > *,
+.content :is(.why-choose-us-section, .testing-methods, .rewards-steps, .rewards-faq) .container > :is(h2, p),
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing, .about-closing) :is(h2, h3, p) {
+  margin-inline: auto; max-width: 62ch;
+}
+.content :is(.rewards-hero-actions, .hero-cta, .buy-peptides-cta .container, .cta-banner-content) { justify-content: center; }
+.content .about-cta-actions { justify-content: flex-start; }
+.content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing) .container { display: flex; flex-direction: column; align-items: center; }
+.content .research-intro .container { max-width: calc(760px + var(--gutter) * 2); }
+.content .research-disclaimer .container > div, .content .research-disclaimer .disclaimer-box { margin-inline: auto; }
+.content .trust-bar-items { justify-items: center; }
+.content .process-header { margin-inline: auto; }
+.content .process-steps { text-align: left; }
+
+/* About: story heading sits at the top of its column, not floating mid-way */
+.content .about-story-grid, .content .about-closing-grid { align-items: start; }
+.content .about-closing-grid { text-align: left; }
+.content .about-closing .container { text-align: left; }
+
+/* Label/value pairs that were run together on the old markup */
+.content .affiliate-proof__list li { display: flex; flex-direction: column; gap: 2px; }
+.content .affiliate-proof__list li strong { font: 700 1.5rem/1.1 var(--f-display); color: var(--ink); }
+.content .affiliate-inclusions__list li strong,
+.content .affiliate-proof__list li strong { display: block; margin-bottom: 2px; }
+
+/* Mobile: centred heroes read better left-aligned below 560px only for long copy */
+@media (max-width: 560px) {
+  .content :is(.cta-banner, .calculator-cta, .buy-peptides-cta, .testing-cta, .affiliate-closing, .rewards-closing) .button { width: 100%; }
+}
+
+/* ==========================================================================
+   Mobile optimisation
+   - nothing under 12px, tap targets >= 44px, inputs >= 16px (no iOS zoom)
+   - safe areas (notch / home bar), no double-tap delay, no tap flash
+   - grids never wider than the screen; wide tables hint they scroll
+   ========================================================================== */
+html { -webkit-tap-highlight-color: transparent; }
+a, button, summary, label, input, select, textarea, .chip, .calc-btn { touch-action: manipulation; }
+.btn:active, .content .button:active, .chip:active, .qty__btn:active, .calc-btn:active { transform: scale(.98); }
+
+/* 12px floor for small labels everywhere */
+.eyebrow, .section-label, .shop-count, .content :is(.about-eyebrow, .rewards-eyebrow, .affiliate-eyebrow, .partner-label),
+.content .quality-tagline, .site-footer__col h2, .price-block__label, .spec-strip dt, .content .calculator-group > label,
+.content .result-label, .content table thead th, .content .legal-page-updated, .content .peptide-card__tagline,
+.pcard__bank, .pcard__flag, .content .rewards-tier-threshold, .content .affiliate-compliance__marker { font-size: max(12px, .72rem); }
+
+/* safe areas */
+.wrap, .container { padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
+.site-footer__bottom { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+.drawer__foot { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+.toast { bottom: calc(24px + env(safe-area-inset-bottom)); }
+
+/* grids can always shrink to the screen */
+.pdp__grid > *, .flow__grid > *, .content :is(.quality-content, .about-hero-grid, .about-story-grid, .about-closing-grid, .partner-content, .calculator-wrapper, .affiliate-partner-hero__grid) > * { min-width: 0; }
+
+/* tap targets */
+.wordmark { min-height: 44px; }
+.crumbs a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -12px; }
+.crumbs { margin-bottom: 14px; }
+.qty input { height: 100%; }
+.content :is(.view-all-link, .peptide-shop__link, .affiliate-text-link, .peptide-card__link, .peptide-related__link, .pdp-accordion__link a) { display: inline-flex; align-items: center; min-height: 44px; }
+.content .view-all-link { border-bottom: 0; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+.site-footer__col a { display: inline-flex; align-items: center; min-height: 40px; }
+.site-footer__col ul { gap: 0; }
+.line__remove { min-height: 44px; min-width: 44px; }
+
+/* sticky buy bar shows the price on phones */
+.pdp__buy-price { display: none; }
+
+/* wide tables: fade on the scroll edge so it is obvious they scroll */
+.content [class*="table-wrapper"] {
+  -webkit-overflow-scrolling: touch;
+  background:
+    linear-gradient(90deg, #fff 30%, rgba(255,255,255,0)) left / 32px 100% no-repeat local,
+    linear-gradient(270deg, #fff 30%, rgba(255,255,255,0)) right / 32px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(15,23,42,.14), transparent) left / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(15,23,42,.14), transparent) right / 12px 100% no-repeat scroll,
+    #fff;
+}
+
+@media (max-width: 860px) {
+  .pdp__buy-price { display: inline; font-weight: 500; opacity: .9; }
+  .pdp__buy .qty { height: 50px; flex-shrink: 0; }
+  .pdp__buy .btn { min-height: 50px; flex: 1; }
+  .pdp { padding-bottom: var(--s-5); }
+}
+
+@media (max-width: 560px) {
+  :root { --gutter: 16px; --sect: 48px; }
+  body { line-height: 1.6; }
+  h1 { font-size: clamp(1.7rem, 7.4vw, 2.1rem); }
+  h2 { font-size: clamp(1.3rem, 5.6vw, 1.6rem); }
+  .content :is(.peptide-hero__title, .about-title, .rewards-hero-title, .affiliate-hero-title, .affiliate-partner-hero__title),
+  .content .research-hero h1, .content .buy-peptides-hero h1, .content .calculator-hero h1 { font-size: clamp(1.75rem, 7.6vw, 2.2rem); }
+  .content .quality-title { font-size: clamp(2rem, 9vw, 2.5rem); }
+  .lead, .content :is(.peptide-hero__subtitle, .about-hero-lead, .hero-subtitle, .rewards-hero-lead, .affiliate-partner-hero__lead) { font-size: 1rem; }
+
+  /* full-width primary actions are easier to hit */
+  .content :is(.quality-buttons, .peptide-hero__cta, .about-hero-actions, .rewards-hero-actions, .affiliate-partner-hero__actions, .hero-cta) { flex-direction: column; align-items: stretch; }
+  .content :is(.quality-buttons, .peptide-hero__cta, .about-hero-actions, .rewards-hero-actions, .affiliate-partner-hero__actions, .hero-cta) > :is(.button, .btn) { width: 100%; }
+
+  /* hero spec cards readable on phones */
+  .content .hero-spec-card { min-height: 0; }
+  .content .hero-spec-ref, .content .hero-spec-rows, .content .hero-spec-ruo, .content .hero-spec-pill { font-size: 12px; }
+  .content .hero-spec-sub { font-size: 13px; }
+  .content .hero-spec-name { font-size: 1.35rem; }
+  .content .hero-shelf { grid-template-columns: repeat(3, 76%); gap: var(--s-3); }
+
+  /* cards */
+  .pcard__name { font-size: .92rem; }
+  .pcard__bank { line-height: 1.35; }
+  .pcard__add .btn { min-height: 44px; font-size: .85rem; }
+
+  /* product page */
+  .pdp__price { gap: var(--s-2); }
+  .price-block { padding: 10px 12px; }
+  .price-block__amt { font-size: 1.35rem; }
+  .pdp__gst { width: 100%; }
+  .spec-strip > div { padding: 10px; }
+
+  /* checkout / cart */
+  .option { padding: 14px; gap: 12px; }
+  .option__body small { font-size: .82rem; }
+  .totals__grand dd { font-size: 1.2rem; }
+  .mini-lines li { grid-template-columns: auto auto 1fr auto; font-size: .88rem; }
+
+  /* drawer: full-height sheet */
+  .drawer__panel { width: 100%; }
+
+  /* footer: one column of nav, two columns side by side stays readable */
+  .site-footer__top { grid-template-columns: 1fr 1fr; }
+  .site-footer__bottom { flex-direction: column; gap: 4px; }
+
+  /* accordions & FAQs */
+  details > summary { font-size: .95rem; }
+  .content .peptide-faq__question, .content .affiliate-faq__item summary { font-size: .95rem; }
+
+  /* guide tables: give first column room, keep second readable */
+  .content table { font-size: .88rem; }
+}
+
+@media (max-width: 360px) {
+  .pcard__add .btn { font-size: .8rem; }
+  .header-tools { gap: 4px; }
+  .cart-link, .nav-toggle { width: 42px; height: 42px; }
+  .wordmark__text { font-size: 1rem; }
+  .content .trust-bar-items { grid-template-columns: 1fr; justify-items: start; }
+}
+
+/* remaining small targets / labels found by the mobile audit */
+.crumbs a, .content .peptide-hero__breadcrumb a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; margin-block: -12px; }
+.content .peptide-hero__breadcrumb { margin-bottom: 22px; }
+.line__name, .link, .content .woocommerce :is(.lost_password, .woocommerce-signup-link) a { display: inline-flex; align-items: center; min-height: 44px; }
+.qty--sm { height: 46px; }
+.spec-strip dd, .price-block__note, .content .peptide-hero__badge, .content .peptide-sequence,
+.content .woocommerce-price-suffix, .content .pl-bank-price__note, .mini-lines__qty { font-size: max(12px, .8rem); }
+
+.content .pl-bank-price small, .content .pl-bank-price .woocommerce-price-suffix, .content .pl-bank-price .pl-bank-price__note { font-size: 12px; }
+/* paragraphs of running text inside forms stay text, not grid rows */
+.content form .woocommerce-privacy-policy-text p, .content form p.woocommerce-LostPassword, .content form p:not(:has(input, select, textarea, button)) { display: block; }
+
+/* ---------- footer: four columns ---------- */
+.site-footer__top { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+@media (max-width: 900px) { .site-footer__top { grid-template-columns: 1fr 1fr 1fr; } .site-footer__brand { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .site-footer__top { grid-template-columns: 1fr 1fr; } .site-footer__col:first-of-type { grid-column: 1 / -1; } .site-footer__col:first-of-type ul { columns: 2; column-gap: var(--s-4); } }
+
+/* ---------- desktop scale ----------
+   Whole site at 80% on laptop/desktop screens for a lighter, less chunky feel.
+   Phones/tablets keep 100% so tap targets stay >= 44px. */
+@media (min-width: 1024px) {
+  html { zoom: .8; }
+}
+
+/* empty cart: no "0" bubble */
+.cart-link__count[data-zero="true"] { display: none; }
