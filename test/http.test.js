@@ -138,7 +138,7 @@ test('SEO: unique titles, descriptions, one h1, canonical, OG/Twitter, valid JSO
     if (!desc || desc.length < 50) problems.push(`${u}: description missing/short`);
     const h1s = (html.match(/<h1[\s>]/g) || []).length;
     if (h1s !== 1) problems.push(`${u}: ${h1s} h1`);
-    if (!html.includes(`<link rel="canonical" href="https://purposelabsau.com${u}"`)) problems.push(`${u}: canonical`);
+    if (!html.includes(`<link rel="canonical" href="https://centralpurposelab.com${u}"`)) problems.push(`${u}: canonical`);
     if (!/<meta property="og:image"/.test(html)) problems.push(`${u}: og:image`);
     if (!/<meta name="twitter:card" content="summary_large_image"/.test(html)) problems.push(`${u}: twitter card`);
     for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
@@ -156,7 +156,7 @@ test('SEO: unique titles, descriptions, one h1, canonical, OG/Twitter, valid JSO
   assert.match((await r('/product-category/healing-peptides/')).text, /"@type":"ItemList"/);
   assert.match((await r('/bpc-157/')).text, /"@type":"FAQPage"/);
   assert.match((await r('/shop/?q=bpc')).text, /<meta name="robots" content="noindex/);
-  assert.match(home, /<meta property="og:image" content="https:\/\/purposelabsau\.com\/opengraph-image\/"/);
+  assert.match(home, /<meta property="og:image" content="https:\/\/centralpurposelab\.com\/opengraph-image\/"/);
   assert.match(home, /<link rel="apple-touch-icon" href="\/apple-icon\/"/);
   for (const u of ['/opengraph-image/', '/brand-logo.png', '/apple-icon/', '/manifest.webmanifest']) {
     assert.equal((await r(u)).status, 200, u);
@@ -179,9 +179,9 @@ test('legacy URLs, search, sort, SEO', async () => {
   assert.ok(prices.length > 40);
   assert.deepEqual(prices, [...prices].sort((a, b) => a - b));
   res = await r('/product/bpc-157-10mg/');
-  assert.match(res.text, /<link rel="canonical" href="https:\/\/purposelabsau\.com\/product\/bpc-157-10mg\/"/);
+  assert.match(res.text, /<link rel="canonical" href="https:\/\/centralpurposelab\.com\/product\/bpc-157-10mg\/"/);
   assert.match(res.text, /"@type":"Product"/);
-  assert.match((await r('/sitemap.xml')).text, /https:\/\/purposelabsau\.com\/shop\//);
+  assert.match((await r('/sitemap.xml')).text, /https:\/\/centralpurposelab\.com\/shop\//);
   assert.equal((await r('/does-not-exist/')).status, 404);
   assert.match((await r('/my-account/lost-password/')).location || '', /notice=accounts/);
   res = await r('/api/account-notice/?from=affiliate-area', { method: 'POST', form: {} });
