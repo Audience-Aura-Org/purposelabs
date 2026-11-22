@@ -1,6 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import { startServer, client } from './server.js';
 import { pages, categories, products, getProduct } from '../lib/catalog.js';
@@ -251,4 +252,65 @@ test('internal page links point at sitemap URLs; no absolute links to other host
     }
   }
   assert.deepEqual([...new Set(problems)], [], [...new Set(problems)].join('\n'));
+});
+
+// ---- www → primary host redirect (next.config.mjs) ----
+
+const WWW = 'www.centralpurposelab.com';
+const PRIMARY = 'centralpurposelab.com';
+
+// fetch() cannot set the Host header, so talk HTTP directly.
+const hostGet = (host, p) => new Promise((resolve, reject) => {
+  const { port } = new URL(srv.base);
+  http.get({ host: '127.0.0.1', port, path: p, headers: { host } }, (res) => {
+    res.resume();
+    resolve({ status: res.statusCode, location: res.headers.location });
+  }).on('error', reject);
+});
+
+const WWW_CASES = [
+  '/', '/shop/', '/shop/?sort=price&q=bpc', '/?s=semax', '/product/bpc-157-10mg/',
+  '/product-category/healing-peptides/', '/bpc-157/', '/privacy-policy/', '/track-order/',
+  '/robots.txt', '/sitemap.xml', '/a%20b/?x=%2F&y=1',
+];
+
+test('www host: 301 to the primary host, path + trailing slash + query preserved, one hop', async () => {
+  for (const p of WWW_CASES) {
+    const res = await hostGet(WWW, p);
+    assert.equal(res.status, 301, `${p} -> ${res.status}`);
+    assert.equal(res.location, `https://${PRIMARY}${p}`, p);
+  }
+  // Host matching is case-insensitive and ignores the port.
+  for (const h of ['WWW.CentralPurposeLab.com', `${WWW}:443`]) {
+    const res = await hostGet(h, '/shop/');
+    assert.equal(res.status, 301, h);
+    assert.equal(res.location, `https://${PRIMARY}/shop/`, h);
+  }
+  // Every sitemap page lands on a 200 on the primary host in a single hop.
+  const locs = sitemapLocs((await client(srv.base)('/sitemap.xml')).text);
+  for (const loc of locs) {
+    const p = loc.slice(SITE.length);
+    const res = await hostGet(WWW, p);
+    assert.equal(res.status, 301, `www ${p}`);
+    assert.equal(res.location, loc, `www ${p}`);
+    assert.equal((await hostGet(PRIMARY, p)).status, 200, `primary ${p} after redirect`);
+  }
+});
+
+test('primary and look-alike hosts are never redirected to the primary host', async () => {
+  const locs = sitemapLocs((await client(srv.base)('/sitemap.xml')).text);
+  for (const loc of locs) {
+    const res = await hostGet(PRIMARY, loc.slice(SITE.length));
+    assert.equal(res.status, 200, `${loc} -> ${res.status} ${res.location || ''}`);
+  }
+  for (const p of ['/shop/?sort=price&q=bpc', '/robots.txt', '/sitemap.xml']) assert.equal((await hostGet(PRIMARY, p)).status, 200, p);
+  // Existing legacy redirects on the primary host stay relative (same host), never cross-host.
+  const legacy = await hostGet(PRIMARY, '/feed/');
+  assert.equal(legacy.status, 308);
+  assert.equal(legacy.location, '/');
+  for (const h of [`evil.${WWW}`, `${WWW}.evil.test`, `x${WWW}`]) {
+    const res = await hostGet(h, '/');
+    assert.notEqual(res.status, 301, `${h} must not match the www rule`);
+    assert.ok(!res.location?.includes(PRIMARY), `${h} must not redirect to the primary host`);
+  }
 });
