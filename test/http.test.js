@@ -187,3 +187,68 @@ test('legacy URLs, search, sort, SEO', async () => {
   res = await r('/api/account-notice/?from=affiliate-area', { method: 'POST', form: {} });
   assert.match(res.location, /\/affiliate-area\/\?notice=accounts/);
 });
+
+// ---- technical SEO: robots.txt, sitemap, canonical/link consistency ----
+
+const SITE = 'https://centralpurposelab.com';
+const PRIVATE_NOINDEX = ['/my-account/', '/affiliate-area/'];
+// Linked from pages but intentionally outside the sitemap.
+const NOT_IN_SITEMAP = new Set(['/cart/', '/checkout/', ...PRIVATE_NOINDEX]);
+
+const sitemapLocs = (xml) => [...xml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+
+test('robots.txt: blocks transactional/API routes, lets crawlers see noindex pages', async () => {
+  const r = client(srv.base);
+  const txt = (await r('/robots.txt')).text;
+  const disallow = [...txt.matchAll(/^Disallow:\s*(\S+)/gim)].map((m) => m[1]);
+  for (const p of ['/cart/', '/checkout/', '/api/']) assert.ok(disallow.includes(p), `missing Disallow ${p}`);
+  for (const p of PRIVATE_NOINDEX) assert.ok(!disallow.includes(p), `${p} must be crawlable so its noindex is seen`);
+  assert.match(txt, new RegExp(`^Sitemap: ${SITE}/sitemap\\.xml$`, 'm'));
+  // The pages robots.txt no longer blocks must carry noindex, with or without the notice query.
+  for (const u of [...PRIVATE_NOINDEX, '/my-account/?notice=accounts', '/affiliate-area/?notice=accounts']) {
+    const res = await r(u);
+    assert.equal(res.status, 200, u);
+    assert.match(res.text, /<meta name="robots" content="noindex/, `${u} must be noindex`);
+  }
+});
+
+test('sitemap: no build-time lastmod, unique primary-domain URLs, all indexable and self-canonical', async () => {
+  const r = client(srv.base);
+  const xml = (await r('/sitemap.xml')).text;
+  assert.doesNotMatch(xml, /<lastmod>/, 'lastmod must come from real modification dates, not the build time');
+  const locs = sitemapLocs(xml);
+  const expected = 2 + categories.length + products.length + pages.filter((p) => !['home', 'my-account', 'affiliate-area'].includes(p.slug)).length;
+  assert.equal(locs.length, expected);
+  assert.equal(new Set(locs).size, locs.length, 'duplicate sitemap URLs');
+  const problems = [];
+  for (const loc of locs) {
+    if (!loc.startsWith(`${SITE}/`) || !loc.endsWith('/')) { problems.push(`${loc}: not a primary-domain trailing-slash URL`); continue; }
+    const res = await r(loc.slice(SITE.length));
+    if (res.status !== 200) { problems.push(`${loc}: ${res.status}`); continue; }
+    if (!res.text.includes(`<link rel="canonical" href="${loc}"`)) problems.push(`${loc}: canonical differs`);
+    if (/<meta name="robots" content="noindex/.test(res.text)) problems.push(`${loc}: noindex page in sitemap`);
+  }
+  for (const p of PRIVATE_NOINDEX) if (locs.includes(SITE + p)) problems.push(`${p}: noindex page in sitemap`);
+  assert.deepEqual(problems, [], problems.join('\n'));
+});
+
+test('internal page links point at sitemap URLs; no absolute links to other hosts of this site', async () => {
+  const r = client(srv.base);
+  const locs = new Set(sitemapLocs((await r('/sitemap.xml')).text).map((l) => l.slice(SITE.length)));
+  const problems = [];
+  for (const path of locs) {
+    const html = (await r(path)).text;
+    for (const m of html.matchAll(/<a\b[^>]*?\shref="([^"#]*)"/g)) {
+      const href = m[1].replace(/&amp;/g, '&');
+      if (/^https?:\/\/(www\.)?(centralpurposelab|purposelabsau)\.com/i.test(href) && !href.startsWith(`${SITE}/`)) {
+        problems.push(`${path}: link to non-primary host ${href}`);
+        continue;
+      }
+      if (!href.startsWith('/') || href.startsWith('//') || href.startsWith('/_next/') || href.startsWith('/api/')) continue;
+      const target = href.split('?')[0];
+      if (/\.[a-z0-9]+$/i.test(target)) continue; // assets
+      if (!locs.has(target) && !NOT_IN_SITEMAP.has(target)) problems.push(`${path}: links to ${target}, which is not in the sitemap`);
+    }
+  }
+  assert.deepEqual([...new Set(problems)], [], [...new Set(problems)].join('\n'));
+});

@@ -6,7 +6,11 @@ export default function robots() {
       userAgent: '*',
       allow: '/',
       // Transactional and API routes; search/sort variants are noindex via meta robots.
-      disallow: ['/cart/', '/checkout/', '/my-account/', '/affiliate-area/', '/api/'],
+      // /my-account/ and /affiliate-area/ are deliberately NOT disallowed: they are
+      // static notice pages (no user data) with <meta name="robots" content="noindex">,
+      // and crawlers can only honour that noindex if they are allowed to fetch the page.
+      // Their form endpoint lives under /api/, which stays disallowed.
+      disallow: ['/cart/', '/checkout/', '/api/'],
     }],
     sitemap: `${brand.siteUrl}/sitemap.xml`,
     host: brand.siteUrl,
